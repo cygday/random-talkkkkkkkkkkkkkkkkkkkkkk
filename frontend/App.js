@@ -251,7 +251,7 @@ const startVideoCall = () => {
     >
       <Text style={styles.nextButtonText}>Next</Text>
     </TouchableOpacity>
-</View>
+    </View>
 
       <View style={styles.giftedChatWrapper}>
         <GiftedChat
@@ -266,6 +266,8 @@ const startVideoCall = () => {
           alwaysShowSend
         />
       </View>
+     </View>
+
     </SafeAreaView>
   );
 }
