@@ -2,6 +2,13 @@
   "name": "frontend",
   "version": "1.0.0",
   "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "build:web": "expo export -p web"
+  },
   "dependencies": {
     "expo": "~57.0.7",
     "expo-status-bar": "~57.0.1",
@@ -10,15 +17,7 @@
     "react-native": "0.86.0",
     "react-native-gifted-chat": "^3.4.0",
     "react-native-web": "^0.21.2",
-    "socket.io-client": "^4.8.3",
-     "build:web": "expo export:web"
-  },
-  "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "build:web": "expo export -p web"
+    "socket.io-client": "^4.8.3"
   },
   "private": true
 }
