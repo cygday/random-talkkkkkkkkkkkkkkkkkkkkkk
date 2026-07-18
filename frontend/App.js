@@ -84,6 +84,24 @@ export default function App() {
       setMessages((previousMessages) => GiftedChat.append(previousMessages, formattedMessage));
     });
 
+	  socketRef.current.on("receive_image", (data) => {
+  const imageMessage = {
+    _id: Math.random().toString(),
+    createdAt: new Date(),
+    image: data.image,
+    user: {
+      _id: data.sender,
+      name: data.sender,
+    },
+  };
+
+  setMessages(previous =>
+    GiftedChat.append(previous, imageMessage)
+  );
+});
+
+
+
     // Partner left event
     socketRef.current.on('partner_disconnected', () => {
       alert('Your partner has disconnected!');
@@ -162,7 +180,7 @@ export default function App() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.card}>
-          <Text style={styles.logo}>🎲 Random Chat</Text>
+          <Text style={styles.logo}>Random talkkkkkkkkkkkkkkkkkk</Text>
           <Text style={styles.subtitle}>Connect and chat with strangers instantly!</Text>
           <TextInput
             style={styles.input}
@@ -193,17 +211,48 @@ export default function App() {
   }
 
   // --- VIEW 3: Chat Screen ---
+const startVideoCall = () => {
+  alert("Video calling not implemented yet");
+};
+
   return (
     <SafeAreaView style={styles.chatContainer}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.headerText}>Stranger ({partner})</Text>
-          <Text style={styles.headerSubtitle}>Logged in as: {username}</Text>
-        </View>
-        <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-          <Text style={styles.nextButtonText}>Next ➡️</Text>
-        </TouchableOpacity>
-      </View>
+<View style={styles.header}>
+  <View>
+    <Text style={styles.headerText}>
+      Stranger ({partner})
+    </Text>
+    <Text style={styles.headerSubtitle}>
+      Logged in as: {username}
+    </Text>
+  </View>
+
+  <View style={{ flexDirection: 'row', gap: 10 }}>
+
+    <TouchableOpacity
+      style={styles.nextButton}
+      onPress={pickImage}
+    >
+      <Text style={styles.nextButtonText}>📷 image</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity
+      style={styles.nextButton}
+      onPress={startVideoCall}
+    >
+      <Text style={styles.nextButtonText}>📹 video </Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity
+      style={styles.nextButton}
+      onPress={handleNext}
+    >
+      <Text style={styles.nextButtonText}>Next</Text>
+    </TouchableOpacity>
+</View>
+	  </View>
 
       <View style={styles.giftedChatWrapper}>
         <GiftedChat
