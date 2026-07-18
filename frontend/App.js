@@ -122,22 +122,109 @@ const [inCall, setInCall] = useState(false);
     });
     
     socketRef.current.on("offer", async (data) => {
-  // answer logic
-     console.log(' offer ');
-     findNewPartner();
+  try {
+    const localStream =
+      await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+
+    if (localVideoRef.current) {
+      localVideoRef.current.srcObject = localStream;
+    }
+
+    const pc = new RTCPeerConnection({
+      iceServers: [
+        {
+          urls: "stun:stun.l.google.com:19302",
+        },
+      ],
     });
 
-    socketRef.current.on("answer", async (data) => {
-  // remote description logic
-     console.log('answer');
-     findNewPartner();
+    peerConnectionRef.current = pc;
+
+    localStream.getTracks().forEach((track) => {
+      pc.addTrack(track, localStream);
     });
 
-    socketRef.current.on("ice-candidate", async (data) => {
-  // add candidate logic
-     console.log(' candidate logic ');
-     findNewPartner();
+    pc.ontrack = (event) => {
+      if (remoteVideoRef.current) {
+        remoteVideoRef.current.srcObject =
+          event.streams[0];
+      }
+    };
+
+    pc.onicecandidate = (event) => {
+      if (event.candidate) {
+        socketRef.current.emit(
+          "ice-candidate",
+          {
+            roomId: data.roomId,
+            candidate: event.candidate,
+          }
+        );
+      }
+    };
+
+    await pc.setRemoteDescription(
+      new RTCSessionDescription(
+        data.offer
+      )
+    );
+
+    const answer =
+      await pc.createAnswer();
+
+    await pc.setLocalDescription(
+      answer
+    );
+
+    socketRef.current.emit("answer", {
+      roomId: data.roomId,
+      answer,
     });
+
+    setInCall(true);
+
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+
+socketRef.current.on("answer", async (data) => {
+  try {
+    if (peerConnectionRef.current) {
+      await peerConnectionRef.current
+        .setRemoteDescription(
+          new RTCSessionDescription(
+            data.answer
+          )
+        );
+    }
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+
+socketRef.current.on(
+  "ice-candidate",
+  async (data) => {
+    try {
+      if (peerConnectionRef.current) {
+        await peerConnectionRef.current
+          .addIceCandidate(
+            new RTCIceCandidate(
+              data.candidate
+            )
+          );
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+);
 
     // Match found event
     socketRef.current.on('match_found', (data) => {

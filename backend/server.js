@@ -162,32 +162,6 @@ io.on('connection', (socket) => {
 });
 
 
-	socketRef.current.on("answer", async (data) => {
-
-  if (peerConnectionRef.current) {
-
-    await peerConnectionRef.current
-      .setRemoteDescription(data.answer);
-
-  }
-
-});
-
-
-socketRef.current.on(
-  "ice-candidate",
-  async (data) => {
-
-    if (peerConnectionRef.current) {
-
-      await peerConnectionRef.current
-        .addIceCandidate(data.candidate);
-
-    }
-
-  }
-);
-
 
 
 
