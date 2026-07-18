@@ -216,60 +216,67 @@ const startVideoCall = () => {
 };
 
   return (
-    <SafeAreaView style={styles.chatContainer}>
-      <View style={styles.header}>
-        <View>
-<View style={styles.header}>
-  <View>
-    <Text style={styles.headerText}>
-      Stranger ({partner})
-    </Text>
-    <Text style={styles.headerSubtitle}>
-      Logged in as: {username}
-    </Text>
-  </View>
+   <SafeAreaView style={styles.chatContainer}>
+     <View style={styles.header}>
+       <View>
+         <Text style={styles.headerText}>
+           Stranger ({partner})
+         </Text>
+         <Text style={styles.headerSubtitle}>
+           Logged in as: {username}
+         </Text>
+       </View>
 
-  <View style={{ flexDirection: 'row', gap: 10 }}>
+       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
-    <TouchableOpacity
-      style={styles.nextButton}
-      onPress={pickImage}
-    >
-      <Text style={styles.nextButtonText}>📷 image</Text>
-    </TouchableOpacity>
+         <TouchableOpacity
+           style={styles.nextButton}
+           onPress={pickImage}
+         >
+          <Text style={styles.nextButtonText}>📷 IMAGE</Text>
+         </TouchableOpacity>
 
-    <TouchableOpacity
-      style={styles.nextButton}
-      onPress={startVideoCall}
-    >
-      <Text style={styles.nextButtonText}>📹 video </Text>
-    </TouchableOpacity>
+         <TouchableOpacity
+           style={[
+             styles.nextButton,
+             { marginLeft: 8 }
+           ]}
+           onPress={startVideoCall}
+          >
+          <Text style={styles.nextButtonText}>📹 VC</Text>
+          </TouchableOpacity>
 
-    <TouchableOpacity
-      style={styles.nextButton}
-      onPress={handleNext}
-    >
-      <Text style={styles.nextButtonText}>Next</Text>
-    </TouchableOpacity>
+          <TouchableOpacity
+           style={[
+             styles.nextButton,
+             { marginLeft: 8 }
+            ]}
+             onPress={handleNext}
+            >
+           <Text style={styles.nextButtonText}>
+             Next ➡️
+           </Text>
+           </TouchableOpacity>
+
+      </View>
     </View>
 
-      <View style={styles.giftedChatWrapper}>
-        <GiftedChat
-          messages={messages}
-          onSend={(newMessages) => onSend(newMessages)}
-          user={{
-            _id: username,
-            name: username,
-          }}
-          renderBubble={renderBubble}
-          placeholder="Type a message..."
-          alwaysShowSend
-        />
-      </View>
-     </View>
+    <View style={styles.giftedChatWrapper}>
+      <GiftedChat
+        messages={messages}
+        onSend={(newMessages) => onSend(newMessages)}
+        user={{
+          _id: username,
+          name: username,
+        }}
+        renderBubble={renderBubble}
+        placeholder="Type a message..."
+        alwaysShowSend
+      />
+    </View>
+  </SafeAreaView>
 
-    </SafeAreaView>
-  );
+ );
 }
 
 const styles = StyleSheet.create({
