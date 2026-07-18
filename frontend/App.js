@@ -2,35 +2,11 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, SafeAreaView, Platform, ActivityIndicator } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import { io } from 'socket.io-client';
-import { registerRootComponent } from 'expo';
-import App from './App';
 
-registerRootComponent(App);
-
-import * as ImagePicker
-from "expo-image-picker";
+import * as ImagePicker from "expo-image-picker";
 
 
 
-const pickImage = async () => {
-
-  const result =
-    await ImagePicker.launchImageLibraryAsync();
-
-  if (!result.canceled) {
-
-    socketRef.current.emit(
-      "send_image",
-      {
-        roomId,
-        image:
-          result.assets[0].uri,
-        sender: username
-      }
-    );
-
-  }
-};
 
 
 const SOCKET_URL = 'https://random-talkkkkkkkkkkkkkkkkkkkkkk.onrender.com';
@@ -47,6 +23,24 @@ export default function App() {
   const [messages, setMessages] = useState([]);
 
   const socketRef = useRef(null);
+
+
+  const pickImage = async () => {
+
+    const result =
+      await ImagePicker.launchImageLibraryAsync();
+
+    if (!result.canceled) {
+
+      socketRef.current.emit("send_image", {
+        roomId,
+        image: result.assets[0].uri,
+        sender: username
+      });
+
+    }
+  };
+
 
   // Initialize Socket once when user logs in
   useEffect(() => {
