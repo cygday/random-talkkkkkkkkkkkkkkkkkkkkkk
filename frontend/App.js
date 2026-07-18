@@ -23,7 +23,7 @@ export default function App() {
     if (!isLoggedIn) return;
 
     socketRef.current = io(SOCKET_URL, {
-	    transports: ['websocket'];
+	    transports: ['websocket'],
 	    upgrade: false
     });
 
