@@ -4,6 +4,8 @@ import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import { io } from 'socket.io-client';
 
 const SOCKET_URL = 'https://random-talkkkkkkkkkkkkkkkkkkkkkk.onrender.com';
+
+
 export default function App() {
   const [username, setUsername] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -20,7 +22,11 @@ export default function App() {
   useEffect(() => {
     if (!isLoggedIn) return;
 
-    socketRef.current = io(SOCKET_URL);
+    socketRef.current = io(SOCKET_URL, {
+	    transports: ['websocket'];
+	    upgrade: false
+    });
+
 
     socketRef.current.on('connect', () => {
       console.log('Connected to server');
