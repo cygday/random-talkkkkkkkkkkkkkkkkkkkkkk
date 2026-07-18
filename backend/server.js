@@ -11,7 +11,13 @@ const io = new Server(server, {
     cors: { origin: "*" }
 });
 
-mongoose.connect('mongodb://127.0.0.1:27017/whatsappClone');
+const dbURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/random-talk';
+
+mongoose.connect(dbURI)
+  .then(() => console.log('Connected to MongoDB Atlas successfully!'))
+  .catch(err => console.error('Database connection error:', err));
+
+
 
 const MessageSchema = new mongoose.Schema({
     sender: String,

@@ -5,6 +5,7 @@ import { io } from 'socket.io-client';
 
 const SOCKET_URL = Platform.OS === 'web' ? 'http://localhost:5000' : 'http://YOUR_COMPUTER_IP:5000';
 
+
 export default function App() {
   const [username, setUsername] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
