@@ -2,6 +2,11 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, SafeAreaView, Platform, ActivityIndicator } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import { io } from 'socket.io-client';
+import { registerRootComponent } from 'expo';
+import App from './App';
+
+registerRootComponent(App);
+
 import * as ImagePicker
 from "expo-image-picker";
 
@@ -48,8 +53,7 @@ export default function App() {
     if (!isLoggedIn) return;
 
     socketRef.current = io(SOCKET_URL, {
-	    transports: ['websocket'],
-	    upgrade: false
+	    transports: ['websocket', 'polling']
     });
 
 

@@ -12,10 +12,9 @@ app.use(cors({
     methods: ["GET", "POST"]
 }));
 
-const server = http.createServer(app);
-const io = new Server(server, {
+const io = require('socket.io')(server, {
     cors: { 
-        origin: ["https://vercel.app", "http://localhost:19006"],
+        origin: "*",
         methods: ["GET", "POST"]
     }
 });
