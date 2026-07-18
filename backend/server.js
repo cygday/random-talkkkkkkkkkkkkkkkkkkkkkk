@@ -93,7 +93,29 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         handleDisconnect(socket);
     });
+
+    socket.on("offer", (data) => {
+        socket.to(data.roomId).emit("offer", data);
+  });
+
+  socket.on("answer", (data) => {
+    socket.to(data.roomId).emit("answer", data);
+  });
+
+  socket.on("ice-candidate", (data) => {
+    socket.to(data.roomId).emit("ice-candidate", data);
+  });
+
+
+  socket.on("send_image", (data) => {
+
+     io.to(data.roomId)
+        .emit("receive_image", data);
+
 });
+
+});
+
 
 function handleDisconnect(socket) {
     waitingQueue = waitingQueue.filter(user => user.socketId !== socket.id);
