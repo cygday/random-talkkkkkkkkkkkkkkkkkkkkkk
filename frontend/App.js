@@ -24,6 +24,71 @@ export default function App() {
 
   const socketRef = useRef(null);
 
+  const localVideoRef = useRef(null);
+const remoteVideoRef = useRef(null);
+const peerConnectionRef = useRef(null);
+
+const [inCall, setInCall] = useState(false);
+
+
+
+
+	const startVideoCall = async () => {
+  try {
+    const localStream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    });
+
+    localVideoRef.current.srcObject = localStream;
+
+    const pc = new RTCPeerConnection({
+      iceServers: [
+        {
+          urls: "stun:stun.l.google.com:19302",
+        },
+      ],
+    });
+
+    peerConnectionRef.current = pc;
+
+    localStream.getTracks().forEach((track) => {
+      pc.addTrack(track, localStream);
+    });
+
+    pc.ontrack = (event) => {
+      remoteVideoRef.current.srcObject = event.streams[0];
+    };
+
+    pc.onicecandidate = (event) => {
+      if (event.candidate) {
+        socketRef.current.emit("ice-candidate", {
+          roomId,
+          candidate: event.candidate,
+        });
+      }
+    };
+
+    const offer = await pc.createOffer();
+
+    await pc.setLocalDescription(offer);
+
+    socketRef.current.emit("offer", {
+      roomId,
+      offer,
+    });
+
+    setInCall(true);
+
+  } catch (err) {
+    console.error(err);
+    alert("Camera permission denied");
+  }
+};
+
+
+
+
 
   const pickImage = async () => {
 
@@ -54,6 +119,24 @@ export default function App() {
     socketRef.current.on('connect', () => {
       console.log('Connected to server');
       findNewPartner();
+    });
+    
+    socketRef.current.on("offer", async (data) => {
+  // answer logic
+     console.log(' offer ');
+     findNewPartner();
+    });
+
+    socketRef.current.on("answer", async (data) => {
+  // remote description logic
+     console.log('answer');
+     findNewPartner();
+    });
+
+    socketRef.current.on("ice-candidate", async (data) => {
+  // add candidate logic
+     console.log(' candidate logic ');
+     findNewPartner();
     });
 
     // Match found event
@@ -211,9 +294,6 @@ export default function App() {
   }
 
   // --- VIEW 3: Chat Screen ---
-const startVideoCall = () => {
-  alert("Video calling not implemented yet");
-};
 
   return (
    <SafeAreaView style={styles.chatContainer}>
@@ -260,20 +340,52 @@ const startVideoCall = () => {
 
       </View>
     </View>
+     <View style={styles.giftedChatWrapper}>
 
-    <View style={styles.giftedChatWrapper}>
-      <GiftedChat
-        messages={messages}
-        onSend={(newMessages) => onSend(newMessages)}
-        user={{
-          _id: username,
-          name: username,
+  {inCall && (
+    <View style={{ padding: 10 }}>
+
+      <video
+        ref={localVideoRef}
+        autoPlay
+        muted
+        playsInline
+        style={{
+          width: 250,
+          height: 180,
+          backgroundColor: '#000',
+          marginBottom: 10
         }}
-        renderBubble={renderBubble}
-        placeholder="Type a message..."
-        alwaysShowSend
       />
+
+      <video
+        ref={remoteVideoRef}
+        autoPlay
+        playsInline
+        style={{
+          width: 250,
+          height: 180,
+          backgroundColor: '#000'
+        }}
+      />
+
     </View>
+  )}
+
+  <GiftedChat
+    messages={messages}
+    onSend={(newMessages) => onSend(newMessages)}
+    user={{
+      _id: username,
+      name: username,
+    }}
+    renderBubble={renderBubble}
+    placeholder="Type a message..."
+    alwaysShowSend
+  />
+
+</View>
+
   </SafeAreaView>
 
  );

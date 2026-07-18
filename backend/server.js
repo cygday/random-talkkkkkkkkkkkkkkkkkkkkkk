@@ -115,6 +115,82 @@ io.on('connection', (socket) => {
 
 });
 
+  socketRef.current.on("offer", async (data) => {
+
+  const localStream =
+    await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    });
+
+  localVideoRef.current.srcObject = localStream;
+
+  const pc = new RTCPeerConnection({
+    iceServers: [
+      {
+        urls: "stun:stun.l.google.com:19302",
+      },
+    ],
+  });
+
+  peerConnectionRef.current = pc;
+
+  localStream.getTracks().forEach((track) => {
+    pc.addTrack(track, localStream);
+  });
+
+  pc.ontrack = (event) => {
+    remoteVideoRef.current.srcObject =
+      event.streams[0];
+  };
+
+  await pc.setRemoteDescription(
+    data.offer
+  );
+
+  const answer =
+    await pc.createAnswer();
+
+  await pc.setLocalDescription(answer);
+
+  socketRef.current.emit("answer", {
+    roomId,
+    answer,
+  });
+
+  setInCall(true);
+});
+
+
+	socketRef.current.on("answer", async (data) => {
+
+  if (peerConnectionRef.current) {
+
+    await peerConnectionRef.current
+      .setRemoteDescription(data.answer);
+
+  }
+
+});
+
+
+socketRef.current.on(
+  "ice-candidate",
+  async (data) => {
+
+    if (peerConnectionRef.current) {
+
+      await peerConnectionRef.current
+        .addIceCandidate(data.candidate);
+
+    }
+
+  }
+);
+
+
+
+
 });
 
 
