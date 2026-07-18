@@ -3,8 +3,7 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, SafeAreaView, Plat
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import { io } from 'socket.io-client';
 
-const SOCKET_URL = Platform.OS === 'web' ? 'http://localhost:5000' : 'http://YOUR_COMPUTER_IP:5000';
-
+const SOCKET_URL = 'https://random-talkkkkkkkkkkkkkkkkkkkkkk.com';
 
 export default function App() {
   const [username, setUsername] = useState('');
