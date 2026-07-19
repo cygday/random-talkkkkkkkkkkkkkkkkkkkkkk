@@ -215,11 +215,7 @@ setInCall(true);
   }
 });
 
-  return () => {
-    socketRef.current?.disconnect();
-  };
-
-}, [isLoggedIn]);
+ 
 
 
 socketRef.current.on("answer", async (data) => {
