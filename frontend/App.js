@@ -23,7 +23,7 @@ export default function App() {
   const [partner, setPartner] = useState('');
   const [roomId, setRoomId] = useState('');
   const [messages, setMessages] = useState([]);
-
+  const [localStream, setLocalStream] = useState(null);
   const socketRef = useRef(null);
 
   const localVideoRef = useRef(null);
@@ -31,7 +31,6 @@ const remoteVideoRef = useRef(null);
 const peerConnectionRef = useRef(null);
 
 const [inCall, setInCall] = useState(false);
-const [localStream, setLocalStream] = useState(null);
 
 
 
