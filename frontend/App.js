@@ -120,7 +120,7 @@ if (!result.canceled) {
 }
 
 
-};
+});
 const startRecording = async () => {
   try {
     await Audio.requestPermissionsAsync();
