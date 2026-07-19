@@ -2,7 +2,9 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, SafeAreaView, Platform, ActivityIndicator } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import { io } from 'socket.io-client';
-
+import {
+  RTCView
+} from "react-native-webrtc";
 import * as ImagePicker from "expo-image-picker";
 
 
@@ -29,6 +31,8 @@ const remoteVideoRef = useRef(null);
 const peerConnectionRef = useRef(null);
 
 const [inCall, setInCall] = useState(false);
+const [localStream, setLocalStream] = useState(null);
+
 
 
 
@@ -38,7 +42,6 @@ const [inCall, setInCall] = useState(false);
     setInCall(true);
 
 
-    const [localStream, setLocalStream] = useState(null);
 
     const stream =
   await navigator.mediaDevices.getUserMedia({
@@ -128,6 +131,9 @@ setInCall(true);
       localStream;
   }
 }, [inCall, localStream]);
+  
+  useEffect(() => {
+  if (!isLoggedIn) return;
 
 
     socketRef.current = io(SOCKET_URL, {
@@ -209,6 +215,12 @@ setInCall(true);
     console.error(err);
   }
 });
+
+  return () => {
+    socketRef.current?.disconnect();
+  };
+
+}, [isLoggedIn]);
 
 
 socketRef.current.on("answer", async (data) => {
@@ -451,7 +463,7 @@ socketRef.current.on(
   {inCall && (
     <View style={{ padding: 10 }}>
 
-      <RTView
+      <video
         ref={localVideoRef}
         autoPlay
         muted
@@ -464,7 +476,7 @@ socketRef.current.on(
         }}
       />
 
-      <RTCView
+      <video
         ref={remoteVideoRef}
         autoPlay
         playsInline
