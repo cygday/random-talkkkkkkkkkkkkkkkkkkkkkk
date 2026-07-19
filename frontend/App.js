@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, SafeAreaView, Plat
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import { io } from 'socket.io-client';
 import * as ImagePicker from "expo-image-picker";
-
+import { Audio } from "expo-av";
 
 
 
@@ -28,7 +28,7 @@ const remoteVideoRef = useRef(null);
 const peerConnectionRef = useRef(null);
 
 const [inCall, setInCall] = useState(false);
-
+const [text, setText] = useState("");
 
 
 
@@ -103,17 +103,41 @@ stream.getTracks().forEach((track) => {
 
 
   const pickImage = async () => {
+	const result =
+  await ImagePicker.launchImageLibraryAsync({
+    base64: true,
+    quality: 0.7,
+  });
 
-    const result =
-      await ImagePicker.launchImageLibraryAsync();
+if (!result.canceled) {
+  socketRef.current.emit("send_image", {
+    roomId,
+    sender: username,
+    image:
+      `data:image/jpeg;base64,${result.assets[0].base64}`,
+  });
+}
 
-    if (!result.canceled) {
 
-      socketRef.current.emit("send_image", {
-        roomId,
-        image: result.assets[0].uri,
-        sender: username
       });
+const startRecording = async () => {
+  try {
+    await Audio.requestPermissionsAsync();
+
+    const recording =
+      new Audio.Recording();
+
+    await recording.prepareToRecordAsync(
+      Audio.RecordingOptionsPresets.HIGH_QUALITY
+    );
+
+    await recording.startAsync();
+
+    console.log("Recording...");
+  } catch (err) {
+    console.log(err);
+  }
+};
 
     }
   };
@@ -450,13 +474,33 @@ socketRef.current.on(
              Next ➡️
            </Text>
            </TouchableOpacity>
+	  <TouchableOpacity
+  onPress={() => setText(text + "😀")}
+>
+  <Text>😀</Text>
+</TouchableOpacity>
+
+<TouchableOpacity
+  onPress={() => setText(text + "❤️")}
+>
+  <Text>❤️</Text>
+</TouchableOpacity>
+
+<TouchableOpacity
+  onPress={() => setText(text + "🔥")}
+>
+  <Text>🔥</Text>
+</TouchableOpacity>
 
       </View>
     </View>
      <View style={styles.giftedChatWrapper}>
 
   {inCall && (
-    <View style={{ padding: 10 }}>
+    <View style={{ flexDirection: "row",
+      justifyContent: "space-between",
+      padding: 10,
+      gap: 10, }}>
 
       <video
         ref={localVideoRef}
@@ -467,7 +511,7 @@ socketRef.current.on(
           width: 250,
           height: 180,
           backgroundColor: '#000',
-          marginBottom: 10
+          borderRadius: 10,
         }}
       />
 
@@ -496,6 +540,29 @@ socketRef.current.on(
     placeholder="Type a message..."
     alwaysShowSend
   />
+
+	  <TextInput
+  value={text}
+  onChangeText={setText}
+  onSubmitEditing={() => {
+    if (text.trim()) {
+      onSend([
+        {
+          _id: Date.now(),
+          text,
+          createdAt: new Date(),
+          user: {
+            _id: username,
+          },
+        },
+      ]);
+
+      setText("");
+    }
+  }}
+/>
+
+
 
 </View>
 
