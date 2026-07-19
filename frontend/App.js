@@ -53,7 +53,8 @@ if (localVideoRef.current) {
 }
 
 
-    localVideoRef.current.srcObject = localStream;
+localVideoRef.current.srcObject = stream;
+
 
     const pc = new RTCPeerConnection({
       iceServers: [
@@ -119,7 +120,7 @@ if (!result.canceled) {
 }
 
 
-      });
+};
 const startRecording = async () => {
   try {
     await Audio.requestPermissionsAsync();
