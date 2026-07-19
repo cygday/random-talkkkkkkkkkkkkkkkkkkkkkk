@@ -2,9 +2,6 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, SafeAreaView, Platform, ActivityIndicator } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import { io } from 'socket.io-client';
-import {
-  RTCView
-} from "react-native-webrtc";
 import * as ImagePicker from "expo-image-picker";
 
 
@@ -48,8 +45,12 @@ const [inCall, setInCall] = useState(false);
     audio: true,
   });
 
+
 setLocalStream(stream);
-setInCall(true);
+
+if (localVideoRef.current) {
+  localVideoRef.current.srcObject = stream;
+}
 
 
     localVideoRef.current.srcObject = localStream;
@@ -64,10 +65,9 @@ setInCall(true);
 
     peerConnectionRef.current = pc;
 
-    localStream.getTracks().forEach((track) => {
-      pc.addTrack(track, localStream);
-    });
-
+stream.getTracks().forEach((track) => {
+  pc.addTrack(track, stream);
+});
     pc.ontrack = (event) => {
       remoteVideoRef.current.srcObject = event.streams[0];
     };
