@@ -104,45 +104,37 @@ stream.getTracks().forEach((track) => {
 
 
   const pickImage = async () => {
-	const result =
-  await ImagePicker.launchImageLibraryAsync({
-    base64: true,
-    quality: 0.7,
-  });
+    const result = await ImagePicker.launchImageLibraryAsync({
+      base64: true,
+      quality: 0.7,
+    });
 
-if (!result.canceled) {
-  socketRef.current.emit("send_image", {
-    roomId,
-    sender: username,
-    image:
-      `data:image/jpeg;base64,${result.assets[0].base64}`,
-  });
-}
-
-
-});
-const startRecording = async () => {
-  try {
-    await Audio.requestPermissionsAsync();
-
-    const recording =
-      new Audio.Recording();
-
-    await recording.prepareToRecordAsync(
-      Audio.RecordingOptionsPresets.HIGH_QUALITY
-    );
-
-    await recording.startAsync();
-
-    console.log("Recording...");
-  } catch (err) {
-    console.log(err);
-  }
-};
-
+    if (!result.canceled && socketRef.current) {
+      socketRef.current.emit("send_image", {
+        roomId,
+        sender: username,
+        image: `data:image/jpeg;base64,${result.assets[0].base64}`,
+      });
     }
   };
 
+  const startRecording = async () => {
+    try {
+      await Audio.requestPermissionsAsync();
+
+      const recording = new Audio.Recording();
+
+      await recording.prepareToRecordAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+
+      await recording.startAsync();
+
+      console.log("Recording...");
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   // Initialize Socket once when user logs in
   useEffect(() => {

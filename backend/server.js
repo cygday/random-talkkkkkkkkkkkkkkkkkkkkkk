@@ -108,12 +108,10 @@ io.on('connection', (socket) => {
   });
 
 
-  socket.on("send_image", (data) => {
 
-     io.to(data.roomId)
-        .emit("receive_image", data);
-
-  });
+socket.on("send_image", (data) => {
+  socket.to(data.roomId).emit("receive_image", data);
+});
 
 });
 
