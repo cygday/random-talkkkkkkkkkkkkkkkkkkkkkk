@@ -35,10 +35,20 @@ const [inCall, setInCall] = useState(false);
 
 	const startVideoCall = async () => {
   try {
-    const localStream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true,
-    });
+    setInCall(true);
+
+
+    const [localStream, setLocalStream] = useState(null);
+
+    const stream =
+  await navigator.mediaDevices.getUserMedia({
+    video: true,
+    audio: true,
+  });
+
+setLocalStream(stream);
+setInCall(true);
+
 
     localVideoRef.current.srcObject = localStream;
 
@@ -109,7 +119,16 @@ const [inCall, setInCall] = useState(false);
 
   // Initialize Socket once when user logs in
   useEffect(() => {
-    if (!isLoggedIn) return;
+    if (
+    inCall &&
+    localVideoRef.current &&
+    localStream
+  ) {
+    localVideoRef.current.srcObject =
+      localStream;
+  }
+}, [inCall, localStream]);
+
 
     socketRef.current = io(SOCKET_URL, {
 	    transports: ['websocket', 'polling']
@@ -432,7 +451,7 @@ socketRef.current.on(
   {inCall && (
     <View style={{ padding: 10 }}>
 
-      <video
+      <RTView
         ref={localVideoRef}
         autoPlay
         muted
@@ -445,7 +464,7 @@ socketRef.current.on(
         }}
       />
 
-      <video
+      <RTCView
         ref={remoteVideoRef}
         autoPlay
         playsInline
